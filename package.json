@@ -1,0 +1,25 @@
+{
+  "name": "space",
+  "version": "1.0.0",
+  "description": "3D objects based on three.js",
+  "main": "space.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SamVers/space.git"
+  },
+  "keywords": [
+    "space"
+  ],
+  "author": "Sam Verstraete",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SamVers/space/issues"
+  },
+  "files": [
+    "chart-lib.js"
+  ],
+  "homepage": "https://github.com/SamVers/space#readme"
+}
