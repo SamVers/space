@@ -1,9 +1,5 @@
-'use strict';
-
-Object.defineProperty(exports, '__esModule', { value: true });
-
-var THREE = require('three/build/three.module.js');
-var OrbitControls_js = require('three/examples/jsm/controls/OrbitControls.js');
+import { Box3, Vector3, CubeGeometry, MeshLambertMaterial, Mesh, Color, SphereGeometry, Matrix4, InstancedMesh, Group, Box3Helper, PerspectiveCamera, Scene, AmbientLight, PointLight, WebGLRenderer, AxesHelper } from 'three/build/three.module.js';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
 // this list contains all the objects that will collide and the time of collision
 // it also keeps track of the statistics of the collisions
@@ -115,8 +111,8 @@ constructor(scene, spec) {
     this.geometry = this.material = this.mesh = null;
 
     // make the bounding box
-    this.bBox = new THREE.Box3( new THREE.Vector3(p.x-s.x/2, p.y-s.y/2, p.z-s.z/2), 
-                                new THREE.Vector3(p.x+s.x/2, p.y+s.y/2, p.z+s.z/2));
+    this.bBox = new Box3( new Vector3(p.x-s.x/2, p.y-s.y/2, p.z-s.z/2), 
+                                new Vector3(p.x+s.x/2, p.y+s.y/2, p.z+s.z/2));
 
     // the material settings
     this.materialSettings = { color: "#aabbdd",wireframe: true,transparent: true,opacity: 0.5};
@@ -154,8 +150,8 @@ changeSize(scene, spec) {
     let p = {x:0, y:0, z:0};
 
     // make the bounding box
-    this.bBox = new THREE.Box3( new THREE.Vector3(p.x-s.x/2, p.y-s.y/2, p.z-s.z/2), 
-                                new THREE.Vector3(p.x+s.x/2, p.y+s.y/2, p.z+s.z/2));
+    this.bBox = new Box3( new Vector3(p.x-s.x/2, p.y-s.y/2, p.z-s.z/2), 
+                                new Vector3(p.x+s.x/2, p.y+s.y/2, p.z+s.z/2));
 
     // we only need the rest if we have a scene to draw into
     if (!scene) return   
@@ -181,17 +177,17 @@ makeGeometry(s) {
 
     // get rid of old geometry if any and create the new one
     if (this.geometry) this.geometry.dispose();
-    this.geometry = new THREE.CubeGeometry(s.x,s.y,s.z, nx, ny, nz);
+    this.geometry = new CubeGeometry(s.x,s.y,s.z, nx, ny, nz);
 }
 
 makeMaterial() {
     if (this.material) this.material.dispose();
-    this.material = new THREE.MeshLambertMaterial(this.materialSettings);
+    this.material = new MeshLambertMaterial(this.materialSettings);
 }
 
 addMesh(scene) {
     if (this.mesh) scene.remove(this.mesh);
-    this.mesh = new THREE.Mesh(this.geometry, this.material);
+    this.mesh = new Mesh(this.geometry, this.material);
     scene.add(this.mesh);
 }
 
@@ -359,20 +355,20 @@ class singleLinkedList {
 }
 
 // colors used for bounding boxes
-const boxFreeClr = new THREE.Color("#00FF00");
-const boxHitClr =  new THREE.Color("#FF0000");
+const boxFreeClr = new Color("#00FF00");
+const boxHitClr =  new Color("#FF0000");
 
 class objectClass {
 
     constructor(mass, radius) {
 
-        this.pos = new THREE.Vector3();
-        this.speed = new THREE.Vector3();
+        this.pos = new Vector3();
+        this.speed = new Vector3();
         this.radius = radius;
         this.mass = mass;
 
         // the bounding box when moving from one position to another
-        this.bBox = new THREE.Box3;
+        this.bBox = new Box3;
 
         // for debugging we sometimes need to see the bounding boxes
         this.boxHelper = null;
@@ -483,8 +479,8 @@ class objectClass {
 }
 
 // colors used for bounding boxes
-const boxFreeClr$1 = new THREE.Color("#00FF00");
-const boxHitClr$1 =  new THREE.Color("#FF0000");
+const boxFreeClr$1 = new Color("#00FF00");
+const boxHitClr$1 =  new Color("#FF0000");
 
 
 // This function generates random numbers along a Normal or Log-normal distribution 
@@ -532,10 +528,10 @@ class objectGroupClass {
         this.mesh = this.geometry = this.material = null;
 
         // the color for the objects of this group
-        let color = new THREE.Color(this.color);
+        let color = new Color(this.color);
 
         // the material
-        this.material = new THREE.MeshLambertMaterial({color: color});
+        this.material = new MeshLambertMaterial({color: color});
 
         // convert to meter
         let radius = init.objectRadius ?
@@ -543,7 +539,7 @@ class objectGroupClass {
                      : 0.0;
 
         // object geometry
-        this.geometry = new THREE.SphereGeometry(radius , 12, 12);
+        this.geometry = new SphereGeometry(radius , 12, 12);
     }
 
     newObjectCount(scene, count, mass, radius) {
@@ -612,7 +608,7 @@ class objectGroupClass {
         let slide = (container.bBox.max.x - container.bBox.min.x - cuboid.x) * location.current/location.max;
 
         // the center of the box is
-        let center = new THREE.Vector3();
+        let center = new Vector3();
         center.x = container.bBox.min.x + cuboid.x/2 + slide;
         center.y = (container.bBox.max.y + container.bBox.min.y)/2;
         center.z = (container.bBox.max.z + container.bBox.min.z)/2;
@@ -751,13 +747,13 @@ class objectGroupClass {
     placeObjectsInScene(scene) {
 
         // the matrix to position the objects
-        let matrix = new THREE.Matrix4();
+        let matrix = new Matrix4();
 
         // check if we have to place a new mesh
         if (this.mesh == null) {
 
             // create an instanced mesh with the geometry - it will be instanced nObjects time
-            this.mesh = new THREE.InstancedMesh(this.geometry, this.material, this.objects.length);
+            this.mesh = new InstancedMesh(this.geometry, this.material, this.objects.length);
 
             // add to the scene
             scene.add(this.mesh);
@@ -859,7 +855,7 @@ class objectGroupClass {
         // check if we have to create the box helper group
         if (this.boxHelperGroup == null ) {
 
-            this.boxHelperGroup = new THREE.Group();
+            this.boxHelperGroup = new Group();
 
             for (let i=0; i < this.objects.length; i++) {
 
@@ -867,7 +863,7 @@ class objectGroupClass {
                 object = this.objects[i];
 
                 // create a boxhelper object
-                object.boxHelper = new THREE.Box3Helper( object.bBox, boxFreeClr$1 );
+                object.boxHelper = new Box3Helper( object.bBox, boxFreeClr$1 );
 
                 // add the helpers to the box helper group
                 this.boxHelperGroup.add(object.boxHelper);
@@ -902,7 +898,7 @@ class objectGroupClass {
         this.geometry.dispose();
 
         // get a new geometry
-        this.geometry = new THREE.SphereGeometry(radius , 12, 12); 
+        this.geometry = new SphereGeometry(radius , 12, 12); 
         
         // and put it in the mesh
         this.mesh.geometry = this.geometry;
@@ -919,7 +915,7 @@ class octreeClass {
     constructor(p1, p2, level) {
 
         // the octant is a box defined by two diagonal points
-        this.space = new THREE.Box3(p1, p2);
+        this.space = new Box3(p1, p2);
 
         // octant is an array that will contain the sub-octants if any
         this.octant = null; //[null, null, null, null, null, null, null, null]
@@ -934,10 +930,10 @@ class octreeClass {
             this.octant = [null, null, null, null, null, null, null, null];
 
             // dp is a vector with the size of the octant at this level
-            let dp = new THREE.Vector3( (p2.x-p1.x)/2,(p2.y-p1.y)/2,(p2.z-p1.z)/2 ); 
+            let dp = new Vector3( (p2.x-p1.x)/2,(p2.y-p1.y)/2,(p2.z-p1.z)/2 ); 
             
             // get a new vector
-            let p = new THREE.Vector3();
+            let p = new Vector3();
 
             // make a total of eight new octants
             let n = 0;
@@ -965,10 +961,10 @@ class octreeClass {
         if (this.octant) {
 
             // dp is a vector with the size of the octant at this level
-            let dp = new THREE.Vector3( (p2.x-p1.x)/2,(p2.y-p1.y)/2,(p2.z-p1.z)/2 ); 
+            let dp = new Vector3( (p2.x-p1.x)/2,(p2.y-p1.y)/2,(p2.z-p1.z)/2 ); 
             
             // a copy of p1
-            let p = new THREE.Vector3();
+            let p = new Vector3();
 
             // adjust the size for for all octants
             let n = 0;
@@ -1071,40 +1067,40 @@ constructor(canvas) {
 	let nearPlane=1, farPlane=10000;
 
 	// the camera
-	this.camera = new THREE.PerspectiveCamera(45,W / H, nearPlane, farPlane);
+	this.camera = new PerspectiveCamera(45,W / H, nearPlane, farPlane);
 	this.camera.position.set(1,1,1);
 	this.camera.lookAt(0,0,0);
 
 	//the scene
-	this.scene = new THREE.Scene();
+	this.scene = new Scene();
 
 	// we will create an ambient and a point light
 	this.lights = {ambient:null, point:null};
 
 	// add an ambient light
-	this.lights.ambient = new THREE.AmbientLight(0xffffff, 0.2);
+	this.lights.ambient = new AmbientLight(0xffffff, 0.2);
 	this.scene.add(this.lights.ambient);
 
 	// add a point light
-	this.lights.point = new THREE.PointLight(0xffffff, 0.9, 0, 2);
+	this.lights.point = new PointLight(0xffffff, 0.9, 0, 2);
 	this.lights.point.position.set(0,0,0);
 	this.scene.add(this.lights.point);
 	
 	// set up the renderer
-	this.renderer = new THREE.WebGLRenderer({canvas: canvas, antialias: true});
+	this.renderer = new WebGLRenderer({canvas: canvas, antialias: true});
 	this.renderer.setClearColor(0x000000);
 	this.renderer.setPixelRatio(window.devicePixelRatio);
 	this.renderer.setSize(W, H);
 	
 	// set up the orbit controls
 	// NOTE BAD REACTION FROM ORBITCONTROLS WHEN HEIGHT +  VH
-	this.orbitControls = new OrbitControls_js.OrbitControls( this.camera, canvas );
+	this.orbitControls = new OrbitControls( this.camera, canvas );
 	this.orbitControls.minDistance = nearPlane;
 	this.orbitControls.maxDistance = farPlane;
 	this.orbitControls.maxPolarAngle = Math.PI;
 
     // add an axes helper to the scene
-	this.scene.add( new THREE.AxesHelper( 1 ) );
+	this.scene.add( new AxesHelper( 1 ) );
 }
 
 adjustToScene(d) {
@@ -1239,11 +1235,5 @@ reportTiming() {
 
 } // end of timer class
 
-exports._3DTimerClass = _3DTimerClass;
-exports.collisionClass = collisionClass;
-exports.cuboidContainerClass = cuboidContainerClass;
-exports.objectClass = objectClass;
-exports.objectGroupClass = objectGroupClass;
-exports.octreeClass = octreeClass;
-exports.studioClass = studioClass;
+export { _3DTimerClass, collisionClass, cuboidContainerClass, objectClass, objectGroupClass, octreeClass, studioClass };
 //# sourceMappingURL=space.js.map

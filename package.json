@@ -1,6 +1,6 @@
 {
   "name": "sv-space",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "3D objects based on three.js",
   "browser": "space.js",
   "scripts": {
