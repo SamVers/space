@@ -1,4 +1,4 @@
-import * as THREE from 'three/build/three.module.js'
+import * as THREE from 'three/build/three.min.js'
 import {singleLinkedList} from '../util/util.js'
 
 export class octreeClass {

@@ -1,4 +1,4 @@
-import * as THREE from 'three/build/three.module.js'
+import * as THREE from 'three/build/three.min.js'
 
 // colors used for bounding boxes
 const boxFreeClr = new THREE.Color("#00FF00")
@@ -83,13 +83,11 @@ export class objectClass {
                 let sqrt = Math.sqrt(det)
                 let t1 = (-b - sqrt)/(2*a)
 
-                /*** 
-                there is a second 'collision' at t2 when the balls intersect when moving apart
-                t2 = (-b + sqrt)/(2*a)
-                t2 = -tCol - b/a
-                t2 > 0 becomes then t1 < -b/a
-                so if we have missed the first intersection (at t1) but t2 is still in the future, we still consider t1
-                ***/
+                // there is a second 'collision' at t2 when the balls intersect when moving apart
+                // t2 = (-b + sqrt)/(2*a)
+                // t2 = -tCol - b/a
+                // t2 > 0 becomes then t1 < -b/a
+                // so if we have missed the first intersection (at t1) but t2 is still in the future, we still consider t1
 
                 // the collision should have happened in the interval except when the second collision is still in the future
                 if ( ( t1 < 0 ) && ((t1 > -interval) || (t1 < -b/a)) ) return t1

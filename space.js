@@ -1,4 +1,6 @@
-define(['exports', 'three/build/three.module.js', 'three/examples/jsm/controls/OrbitControls.js'], function (exports, THREE, OrbitControls_js) { 'use strict';
+define(['exports', 'three/build/three.min.js', 'orbit-controls-es6'], function (exports, THREE, OrbitControls) { 'use strict';
+
+    OrbitControls = OrbitControls && OrbitControls.hasOwnProperty('default') ? OrbitControls['default'] : OrbitControls;
 
     // this list contains all the objects that will collide and the time of collision
     // it also keeps track of the statistics of the collisions
@@ -436,13 +438,11 @@ define(['exports', 'three/build/three.module.js', 'three/examples/jsm/controls/O
                     let sqrt = Math.sqrt(det);
                     let t1 = (-b - sqrt)/(2*a);
 
-                    /*** 
-                    there is a second 'collision' at t2 when the balls intersect when moving apart
-                    t2 = (-b + sqrt)/(2*a)
-                    t2 = -tCol - b/a
-                    t2 > 0 becomes then t1 < -b/a
-                    so if we have missed the first intersection (at t1) but t2 is still in the future, we still consider t1
-                    ***/
+                    // there is a second 'collision' at t2 when the balls intersect when moving apart
+                    // t2 = (-b + sqrt)/(2*a)
+                    // t2 = -tCol - b/a
+                    // t2 > 0 becomes then t1 < -b/a
+                    // so if we have missed the first intersection (at t1) but t2 is still in the future, we still consider t1
 
                     // the collision should have happened in the interval except when the second collision is still in the future
                     if ( ( t1 < 0 ) && ((t1 > -interval) || (t1 < -b/a)) ) return t1
@@ -1055,6 +1055,8 @@ define(['exports', 'three/build/three.module.js', 'three/examples/jsm/controls/O
         }
     }// end of octree class
 
+    //import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
+
     class studioClass {
 
     constructor(canvas) {
@@ -1093,7 +1095,7 @@ define(['exports', 'three/build/three.module.js', 'three/examples/jsm/controls/O
     	
     	// set up the orbit controls
     	// NOTE BAD REACTION FROM ORBITCONTROLS WHEN HEIGHT +  VH
-    	this.orbitControls = new OrbitControls_js.OrbitControls( this.camera, canvas );
+    	this.orbitControls = new OrbitControls( this.camera, canvas );
     	this.orbitControls.minDistance = nearPlane;
     	this.orbitControls.maxDistance = farPlane;
     	this.orbitControls.maxPolarAngle = Math.PI;
@@ -1120,17 +1122,16 @@ define(['exports', 'three/build/three.module.js', 'three/examples/jsm/controls/O
 
     class _3DTimerClass {
 
-    	/**
-    	 * fTime is the start of the frame
-    	 * uTime is the start of the update
-    	 * rTime is the start of the render
-    	 * 
-    	 * flextime means update will use real time difference between two frames (could 17ms but also 20ms etc.)
-    	 * if flextime = false then each frame is considered to have the same fixed length, eg 16.666 ms
-    	 * 
-    	 * The timefactor is how much one framesecond is in real time - eg timefactor = 0.1 slows down the action by 10
-    	 */
-         constructor(fixedLength = 0.0, timeFactor = 1.0, reportCount = 600) {
+    	//  fTime is the start of the frame
+    	//  uTime is the start of the update
+    	//  rTime is the start of the render
+    	 
+    	//  flextime means update will use real time difference between two frames (could 17ms but also 20ms etc.)
+    	//  if flextime = false then each frame is considered to have the same fixed length, eg 16.666 ms
+    	 
+    	//  The timefactor is how much one framesecond is in real time - eg timefactor = 0.1 slows down the action by 10
+    	 
+        constructor(fixedLength = 0.0, timeFactor = 1.0, reportCount = 600) {
 
     		//if a fixed frame time is given (in seconds)
     		this.flexTime = fixedLength > 0.0 ? false : true;

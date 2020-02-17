@@ -1,8 +1,8 @@
 {
   "name": "sv-space",
-  "version": "1.0.2",
+  "version": "1.0.0",
   "description": "3D objects based on three.js",
-  "browser": "space.js",
+  "main": "space.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

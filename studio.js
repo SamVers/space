@@ -1,5 +1,6 @@
-import * as THREE from 'three/build/three.module.js'
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
+import * as THREE from 'three/build/three.min.js'
+import OrbitControls from 'orbit-controls-es6'
+//import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 
 export class studioClass {
 

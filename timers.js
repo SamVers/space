@@ -1,16 +1,15 @@
 export class _3DTimerClass {
 
-	/**
-	 * fTime is the start of the frame
-	 * uTime is the start of the update
-	 * rTime is the start of the render
-	 * 
-	 * flextime means update will use real time difference between two frames (could 17ms but also 20ms etc.)
-	 * if flextime = false then each frame is considered to have the same fixed length, eg 16.666 ms
-	 * 
-	 * The timefactor is how much one framesecond is in real time - eg timefactor = 0.1 slows down the action by 10
-	 */
-     constructor(fixedLength = 0.0, timeFactor = 1.0, reportCount = 600) {
+	//  fTime is the start of the frame
+	//  uTime is the start of the update
+	//  rTime is the start of the render
+	 
+	//  flextime means update will use real time difference between two frames (could 17ms but also 20ms etc.)
+	//  if flextime = false then each frame is considered to have the same fixed length, eg 16.666 ms
+	 
+	//  The timefactor is how much one framesecond is in real time - eg timefactor = 0.1 slows down the action by 10
+	 
+    constructor(fixedLength = 0.0, timeFactor = 1.0, reportCount = 600) {
 
 		//if a fixed frame time is given (in seconds)
 		this.flexTime = fixedLength > 0.0 ? false : true

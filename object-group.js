@@ -1,4 +1,4 @@
-import * as THREE from 'three/build/three.module.js'
+import * as THREE from 'three/build/three.min.js'
 import * as SI  from '../util/util.js'
 import {objectClass} from './object.js'
 
