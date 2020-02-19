@@ -1,4 +1,5 @@
-import * as THREE from 'three/build/three.min.js'
+// import * as THREE from 'three/build/three.min.js'
+import * as THREE from 'three'
 
 // colors used for bounding boxes
 const boxFreeClr = new THREE.Color("#00FF00")

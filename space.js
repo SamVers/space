@@ -1,62 +1,10 @@
-define(['exports', 'three/build/three.min.js', 'orbit-controls-es6'], function (exports, THREE, OrbitControls) { 'use strict';
+(function (global, factory) {
+    typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('three'), require('orbit-controls-es6')) :
+    typeof define === 'function' && define.amd ? define(['exports', 'three', 'orbit-controls-es6'], factory) :
+    (global = global || self, factory(global.spaceModule = {}, global.THREE, global.OrbitControls));
+}(this, function (exports, THREE, OrbitControls) { 'use strict';
 
     OrbitControls = OrbitControls && OrbitControls.hasOwnProperty('default') ? OrbitControls['default'] : OrbitControls;
-
-    // this list contains all the objects that will collide and the time of collision
-    // it also keeps track of the statistics of the collisions
-    class collisionClass {
-
-        constructor() {
-
-            this.list = [];
-            this.count = 0;
-            this.period = 0.0;
-        }
-
-        resetCount() {
-            this.count = 0;
-            this.period = 0.0;
-        }
-
-        resetList() {
-            this.list = [];
-        }
-
-        add( a, b, t) {
-
-            this.list.push({a,b,t});
-        }
-
-        collide(interval) { 
-
-            let list = this.list;
-            
-            // check
-            if (list.length < 1) return
-
-            // sort the list 
-            list.sort( (r1, r2) => r1.t - r2.t );
-
-            // do all collisions
-            let len = list.length;
-            let col = null;
-            for (let i=0; i < len ; i++) {
-
-                // get the collision record
-                col = list[i];
-
-                // parameters are the other object, the collision time (relative to the start if the interval) and the interval duration
-                col.a.collide(col.b, col.t, interval);
-            }
-
-            this.period += interval;
-            this.count += len;
-        }
-
-        get() {
-            return {count: this.count, period: this.period}
-        }
-    }
 
     // the units that are 
     const allSeries = [
@@ -93,6 +41,8 @@ define(['exports', 'three/build/three.min.js', 'orbit-controls-es6'], function (
         if (exp == null) return null
         else return 10**exp
     }
+
+    //import * as THREE from 'three/build/three.min.js'
 
     // The box container
     class cuboidContainerClass {
@@ -288,6 +238,62 @@ define(['exports', 'three/build/three.min.js', 'orbit-controls-es6'], function (
 
     } // end of container class
 
+    // this list contains all the objects that will collide and the time of collision
+    // it also keeps track of the statistics of the collisions
+    class collisionClass {
+
+        constructor() {
+
+            this.list = [];
+            this.count = 0;
+            this.period = 0.0;
+        }
+
+        resetCount() {
+            this.count = 0;
+            this.period = 0.0;
+        }
+
+        resetList() {
+            this.list = [];
+        }
+
+        add( a, b, t) {
+
+            this.list.push({a,b,t});
+        }
+
+        collide(interval) { 
+
+            let list = this.list;
+            
+            // check
+            if (list.length < 1) return
+
+            // sort the list 
+            list.sort( (r1, r2) => r1.t - r2.t );
+
+            // do all collisions
+            let len = list.length;
+            let col = null;
+            for (let i=0; i < len ; i++) {
+
+                // get the collision record
+                col = list[i];
+
+                // parameters are the other object, the collision time (relative to the start if the interval) and the interval duration
+                col.a.collide(col.b, col.t, interval);
+            }
+
+            this.period += interval;
+            this.count += len;
+        }
+
+        get() {
+            return {count: this.count, period: this.period}
+        }
+    }
+
     // a doubly linked list of elements
     class singleLinkedList {
 
@@ -354,6 +360,8 @@ define(['exports', 'three/build/three.min.js', 'orbit-controls-es6'], function (
             return p
         }
     }
+
+    // import * as THREE from 'three/build/three.min.js'
 
     // colors used for bounding boxes
     const boxFreeClr = new THREE.Color("#00FF00");
@@ -477,6 +485,8 @@ define(['exports', 'three/build/three.min.js', 'orbit-controls-es6'], function (
         }
     }
 
+    // import * as THREE from 'three/build/three.min.js'
+
     // colors used for bounding boxes
     const boxFreeClr$1 = new THREE.Color("#00FF00");
     const boxHitClr$1 =  new THREE.Color("#FF0000");
@@ -509,13 +519,13 @@ define(['exports', 'three/build/three.min.js', 'orbit-controls-es6'], function (
 
     class objectGroupClass {
 
-        constructor(init) {
+        constructor(name, color) {
 
             // save the name
-            this.name = String(init.name);
+            this.name = String(name);
 
             // we also save the color
-            this.color = init.color;
+            this.color = color;
 
             // the objects positions etc
             this.objects = [];
@@ -526,19 +536,16 @@ define(['exports', 'three/build/three.min.js', 'orbit-controls-es6'], function (
             // we keep the mesh, geometry and material
             this.mesh = this.geometry = this.material = null;
 
-            // the color for the objects of this group
-            let color = new THREE.Color(this.color);
-
             // the material
-            this.material = new THREE.MeshLambertMaterial({color: color});
+            this.material = new THREE.MeshLambertMaterial({color: new THREE.Color(this.color)});
 
             // convert to meter
-            let radius = init.objectRadius ?
-                         +init.objectRadius.value * factor("length",init.objectRadius.unit, "m")
-                         : 0.0;
+            // let radius = init.objectRadius ?
+            //              +init.objectRadius.value * SI.factor("length",init.objectRadius.unit, "m")
+            //              : 0.0
 
             // object geometry
-            this.geometry = new THREE.SphereGeometry(radius , 12, 12);
+            // this.geometry = new THREE.SphereGeometry(radius , 12, 12)
         }
 
         newObjectCount(scene, count, mass, radius) {
@@ -892,21 +899,23 @@ define(['exports', 'three/build/three.min.js', 'orbit-controls-es6'], function (
 
             // recalculate the radius
             let radius = (+value) * factor("length",unit,"m");
-
+            
             // we have to change the geometry
-            this.geometry.dispose();
+            if (this.geometry) this.geometry.dispose();
 
             // get a new geometry
             this.geometry = new THREE.SphereGeometry(radius , 12, 12); 
             
             // and put it in the mesh
-            this.mesh.geometry = this.geometry;
+            if (this.mesh) this.mesh.geometry = this.geometry;
 
             // change all objects
             for (let i=0; i < this.objects.length; i++) 
                 this.objects[i].radius = radius;
         }
     }
+
+    // import * as THREE from 'three/build/three.min.js'
 
     class octreeClass {
 
@@ -1055,6 +1064,7 @@ define(['exports', 'three/build/three.min.js', 'orbit-controls-es6'], function (
         }
     }// end of octree class
 
+    // import * as THREE from 'three/build/three.min.js'
     //import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 
     class studioClass {
@@ -1245,5 +1255,5 @@ define(['exports', 'three/build/three.min.js', 'orbit-controls-es6'], function (
 
     Object.defineProperty(exports, '__esModule', { value: true });
 
-});
+}));
 //# sourceMappingURL=space.js.map

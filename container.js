@@ -1,4 +1,5 @@
-import * as THREE from 'three/build/three.min.js'
+//import * as THREE from 'three/build/three.min.js'
+import * as THREE from 'three'
 import * as SI from '../../lib/util/SI-units.js'
 
 // The box container

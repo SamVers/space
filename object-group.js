@@ -1,4 +1,5 @@
-import * as THREE from 'three/build/three.min.js'
+// import * as THREE from 'three/build/three.min.js'
+import * as THREE from 'three'
 import * as SI  from '../util/util.js'
 import {objectClass} from './object.js'
 
@@ -36,13 +37,13 @@ function normalRandom() {
 
 export class objectGroupClass {
 
-    constructor(init) {
+    constructor(name, color) {
 
         // save the name
-        this.name = String(init.name)
+        this.name = String(name)
 
         // we also save the color
-        this.color = init.color
+        this.color = color
 
         // the objects positions etc
         this.objects = []
@@ -53,19 +54,16 @@ export class objectGroupClass {
         // we keep the mesh, geometry and material
         this.mesh = this.geometry = this.material = null
 
-        // the color for the objects of this group
-        let color = new THREE.Color(this.color)
-
         // the material
-        this.material = new THREE.MeshLambertMaterial({color: color})
+        this.material = new THREE.MeshLambertMaterial({color: new THREE.Color(this.color)})
 
         // convert to meter
-        let radius = init.objectRadius ?
-                     +init.objectRadius.value * SI.factor("length",init.objectRadius.unit, "m")
-                     : 0.0
+        // let radius = init.objectRadius ?
+        //              +init.objectRadius.value * SI.factor("length",init.objectRadius.unit, "m")
+        //              : 0.0
 
         // object geometry
-        this.geometry = new THREE.SphereGeometry(radius , 12, 12)
+        // this.geometry = new THREE.SphereGeometry(radius , 12, 12)
     }
 
     newObjectCount(scene, count, mass, radius) {
@@ -419,15 +417,15 @@ export class objectGroupClass {
 
         // recalculate the radius
         let radius = (+value) * SI.factor("length",unit,"m")
-
+        
         // we have to change the geometry
-        this.geometry.dispose()
+        if (this.geometry) this.geometry.dispose()
 
         // get a new geometry
         this.geometry = new THREE.SphereGeometry(radius , 12, 12) 
         
         // and put it in the mesh
-        this.mesh.geometry = this.geometry
+        if (this.mesh) this.mesh.geometry = this.geometry
 
         // change all objects
         for (let i=0; i < this.objects.length; i++) 
