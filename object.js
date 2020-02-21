@@ -118,8 +118,8 @@ export class objectClass {
         other.speed.add( p.multiplyScalar(f2) )
 
         // the two objects have still tCol seconds to travel with the new speed (-tCol is positive !)
-        this.pos.addScaledVector(this.speed, -tCol)
-        other.pos.addScaledVector(other.speed, -tCol)      
+        this.pos.addScaledVector( this.speed, -tCol )
+        other.pos.addScaledVector( other.speed, -tCol )      
     }
 }
 

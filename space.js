@@ -480,8 +480,8 @@
             other.speed.add( p.multiplyScalar(f2) );
 
             // the two objects have still tCol seconds to travel with the new speed (-tCol is positive !)
-            this.pos.addScaledVector(this.speed, -tCol);
-            other.pos.addScaledVector(other.speed, -tCol);      
+            this.pos.addScaledVector( this.speed, -tCol );
+            other.pos.addScaledVector( other.speed, -tCol );      
         }
     }
 
@@ -538,7 +538,6 @@
 
             // the material
             this.material = new THREE.MeshLambertMaterial({color: new THREE.Color(this.color)});
-
             // convert to meter
             // let radius = init.objectRadius ?
             //              +init.objectRadius.value * SI.factor("length",init.objectRadius.unit, "m")
