@@ -86,6 +86,12 @@ constructor(scene, spec) {
     this.addMesh(scene);
 }
 
+destructor(scene) {
+    if (this.mesh) scene.remove(this.mesh), this.mesh=null;
+    if (this.geometry) this.geometry.dispose(), this.geometry = null;
+    if (this.material) this.material.dispose(), this.material = null;
+}
+
 changeSize(scene, spec) {
 
     // size of the bounding box - everything in meter 
@@ -533,6 +539,10 @@ class objectGroupClass {
 
         // the material
         this.material = new MeshLambertMaterial({color: new Color(this.color)});
+
+        // the accelerator 
+        this.speedUp = 1.0;
+
         // convert to meter
         // let radius = init.objectRadius ?
         //              +init.objectRadius.value * SI.factor("length",init.objectRadius.unit, "m")
@@ -540,6 +550,13 @@ class objectGroupClass {
 
         // object geometry
         // this.geometry = new THREE.SphereGeometry(radius , 12, 12)
+    }
+
+    destructor(scene) {
+
+        if (this.mesh) scene.remove(this.mesh);
+        if (this.geometry) this.geometry.dispose();
+        if (this.material) this.material.dispose();
     }
 
     newObjectCount(scene, count, mass, radius) {
@@ -550,7 +567,6 @@ class objectGroupClass {
             scene.remove( this.boxHelperGroup );
             this.boxHelperGroup = null;
         }
-
         // get a new array for the objects
         this._setObjectArrays(count, mass, radius);
 
@@ -906,6 +922,23 @@ class objectGroupClass {
         // change all objects
         for (let i=0; i < this.objects.length; i++) 
             this.objects[i].radius = radius;
+    }
+
+    accelerate(speedUp) {
+
+        console.log("SpeedUp", speedUp);
+
+        // change all objects if the speedUp changed
+        if (speedUp == this.speedUp) return
+
+        // the new factor up is calculated 
+        let factor = speedUp/this.speedUp;
+
+        // save the new speedup
+        this.speedUp = speedUp;
+
+        // adjust all objects
+        for (let i=0; i < this.objects.length; i++) this.objects[i].speed.multiplyScalar(factor);
     }
 }
 

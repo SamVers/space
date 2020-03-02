@@ -49,6 +49,12 @@ constructor(scene, spec) {
     this.addMesh(scene)
 }
 
+destructor(scene) {
+    if (this.mesh) scene.remove(this.mesh), this.mesh=null
+    if (this.geometry) this.geometry.dispose(), this.geometry = null
+    if (this.material) this.material.dispose(), this.material = null
+}
+
 changeSize(scene, spec) {
 
     // size of the bounding box - everything in meter 
