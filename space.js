@@ -120,7 +120,7 @@ makeGeometry(s) {
     // we make some subdivisions on the cuboid
     let min = s.x < s.y ? ( s.x < s.z ? s.x : s.z) : ( s.y < s.z ? s.y : s.z);
 
-    // calculate the nr of subdivisions and limit to 32
+    // calculate the nr of subdivisions 
     let [nx,ny,nz] = [4*Math.round(s.x/min), 4*Math.round(s.y/min), 4*Math.round(s.z/min)];
 
     // max nr of divisions
@@ -237,6 +237,14 @@ getCollisions() {
     return count
 }
 
+reset() {
+    // reset the nr of collisions
+    c.nX1 = c.nX2 = c.nY1 = c.nY2 = c.nZ1 = c.nZ2 = 0;
+
+    // reset the force
+    f.x1 = f.x2 = f.y1 = f.y2 = f.z1 = f.z2 = 0.0;
+}
+
 } // end of container class
 
 // this list contains all the objects that will collide and the time of collision
@@ -245,6 +253,7 @@ class collisionClass {
 
     constructor() {
 
+        // the list of objects for which collisions have to be calculated
         this.list = [];
         this.count = 0;
         this.period = 0.0;
@@ -926,8 +935,6 @@ class objectGroupClass {
 
     accelerate(speedUp) {
 
-        console.log("SpeedUp", speedUp);
-
         // change all objects if the speedUp changed
         if (speedUp == this.speedUp) return
 
@@ -1090,6 +1097,76 @@ class octreeClass {
         return n
     }
 }// end of octree class
+
+class longColliderClass {
+
+    constructor(p1, p2, level) {
+
+        let q1=p1.clone(), q2=p1.clone;
+        let n = 2**level;
+        this.zStep = p2.z - p1.z / n;
+
+        // Make a simple list of boxes - each box has a list of the particles contained in the box
+        for (let i = 0; i < n; i++) {       
+            q1.z = q2.z;
+            q2.z += zStep;
+            this.slices[i] = { box:new Box3(q1,q2), particleList: new singleLinkedList };
+        }
+    }
+
+    // when the size of the container changes, the sizes of the octants have to be adapted as well
+    sizeChange(p1,p2) {
+
+        let q1=p1.clone(), q2=p1.clone;
+        let n = this.slices.length;
+        this.zStep = p2.z-p1.z/n;
+        for (let i = 0; i < n; i++) {       
+            q1.z = q2.z;
+            q2.z += zStep;
+            this.slices[i].box.min = {...q1};
+            this.slices[i].box.max = {...q2};
+        }
+    }
+
+    // all the particle lists are reset
+    reset() {
+        // reset the particle lis
+        this.slices.forEach( (slice) => slice.particleList.reset());
+    }
+
+    // particle is checked against the other particles already in the octree
+    // secTime is the duration of the interval in seconds 
+    // collisions is an array that will contain all collision events in the interval
+    collisionCheck( particle, secTime, collisions) {
+
+        let n = this.slices.length;
+        let other = null;
+        zMin = particle.bBox.min.z;
+        zMax = particle.bBox.max.z;
+
+        // check all slices
+        for (let i = 0; i < n; i++) {     
+            slice = this.slices[i];
+
+            // check if particle passes through this slice
+            if ((zMin < slice.box.max.z ) && (zMax > slice.box.min.z)) {
+                other = slice.particleList.first;
+                while (other) {
+                    let when = 0.0;
+                    if ( ( when = particle.intersects(other, secTime)) != Infinity ) {
+                        collisions.add(particle,other,when);
+                        slice.particleList.attach(particle);
+                        return true;
+                    }
+                    other = other.next;   
+                }      
+            }
+            // there are no more slices where the particle passes through
+            else return false
+        }
+        return false
+    }
+}// end of class
 
 // import * as THREE from 'three/build/three.min.js'
 //import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
@@ -1272,5 +1349,5 @@ reportTiming() {
 
 } // end of timer class
 
-export { _3DTimerClass, collisionClass, cuboidContainerClass, objectClass, objectGroupClass, octreeClass, studioClass };
+export { _3DTimerClass, collisionClass, cuboidContainerClass, longColliderClass, objectClass, objectGroupClass, octreeClass, studioClass };
 //# sourceMappingURL=space.js.map

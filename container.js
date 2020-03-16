@@ -83,7 +83,7 @@ makeGeometry(s) {
     // we make some subdivisions on the cuboid
     let min = s.x < s.y ? ( s.x < s.z ? s.x : s.z) : ( s.y < s.z ? s.y : s.z)
 
-    // calculate the nr of subdivisions and limit to 32
+    // calculate the nr of subdivisions 
     let [nx,ny,nz] = [4*Math.round(s.x/min), 4*Math.round(s.y/min), 4*Math.round(s.z/min)]
 
     // max nr of divisions
@@ -198,6 +198,14 @@ getCollisions() {
     let count = c.nX1 + c.nX2 + c.nY1 + c.nY2 + c.nZ1 + c.nZ2
     c.nX1 = c.nX2 = c.nY1 = c.nY2 = c.nZ1 = c.nZ2 = 0
     return count
+}
+
+reset() {
+    // reset the nr of collisions
+    c.nX1 = c.nX2 = c.nY1 = c.nY2 = c.nZ1 = c.nZ2 = 0
+
+    // reset the force
+    f.x1 = f.x2 = f.y1 = f.y2 = f.z1 = f.z2 = 0.0
 }
 
 } // end of container class

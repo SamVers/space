@@ -443,8 +443,6 @@ export class objectGroupClass {
 
     accelerate(speedUp) {
 
-        console.log("SpeedUp", speedUp)
-
         // change all objects if the speedUp changed
         if (speedUp == this.speedUp) return
 

@@ -4,6 +4,7 @@ export class collisionClass {
 
     constructor() {
 
+        // the list of objects for which collisions have to be calculated
         this.list = []
         this.count = 0
         this.period = 0.0
